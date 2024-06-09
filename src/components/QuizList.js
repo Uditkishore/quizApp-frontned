@@ -3,8 +3,10 @@ import axios from 'axios';
 import './QuizList.css';
 
 import { baseUrl } from '../api';
+import { useSelector } from 'react-redux';
 
 const QuizList = () => {
+    const { user } = useSelector(state => state.user.userData)
     const [quizzes, setQuizzes] = useState([]);
     const [isCorrect, setIsCorrect] = useState({});
     const [selectedOptions, setSelectedOptions] = useState({});
@@ -50,44 +52,51 @@ const QuizList = () => {
         <div className="quiz-container">
             {isSubmitted ? (
                 <div>
-                    <p className="result">Total Score: {correctCount}/100</p>
+                    <div className='d-flex justify-content-between'>
+                        <p className="result">Total Score: {correctCount}/100</p>
+                        <p className="result">Welcone Back <b>{user.name}👋</b></p>
+                    </div>
                     <ul className="quiz-list">
-                        <h1>Correct Answers: </h1>
+                        <p>You have already submited your response !</p>
+                        <b>Check the currect answers: </b>
                         {quizzes.map(quiz => (
                             <li key={quiz._id} className="quiz-item">
                                 <p className="question">{quiz.question}</p>
-                                <p className="answer">Correct Answer: {quiz.answer}</p>
+                                <p className="answer">Correct Answer: <i>{quiz.answer}</i></p>
                             </li>
                         ))}
                     </ul>
                 </div>
             ) : (
-                <ol className="quiz-list">
-                    {quizzes.map(quiz => (
-                        <li key={quiz._id} className="quiz-item">
-                            <p className="question">{quiz.question}</p>
-                            <ul className="option-list">
-                                {quiz.options.map((option, index) => {
-                                    const isSelected = selectedOptions[quiz._id] === option;
-                                    const buttonClass = isSelected ? (isCorrect[quiz._id] ? 'option-button selected correct' : 'option-button selected incorrect') : 'option-button';
-                                    const isDisabled = disabledQuizzes[quiz._id] || isSubmitted;
+                <>
+                    <p className="result">Welcone Back <b>{user.name}👋</b></p>
+                    <ol className="quiz-list">
+                        {quizzes.map(quiz => (
+                            <li key={quiz._id} className="quiz-item">
+                                <p className="question">{quiz.question}</p>
+                                <ul className="option-list">
+                                    {quiz.options.map((option, index) => {
+                                        const isSelected = selectedOptions[quiz._id] === option;
+                                        const buttonClass = isSelected ? (isCorrect[quiz._id] ? 'option-button selected correct' : 'option-button selected incorrect') : 'option-button';
+                                        const isDisabled = disabledQuizzes[quiz._id] || isSubmitted;
 
-                                    return (
-                                        <li key={index} className="option-item">
-                                            <button
-                                                onClick={() => handleSelect(quiz._id, option, quiz.answer)}
-                                                className={buttonClass}
-                                                disabled={isDisabled}
-                                            >
-                                                {option}
-                                            </button>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </li>
-                    ))}
-                </ol>
+                                        return (
+                                            <li key={index} className="option-item">
+                                                <button
+                                                    onClick={() => handleSelect(quiz._id, option, quiz.answer)}
+                                                    className={buttonClass}
+                                                    disabled={isDisabled}
+                                                >
+                                                    {option}
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </li>
+                        ))}
+                    </ol>
+                </>
             )}
             {!isSubmitted && (
                 <button className="submit-button" onClick={handleSubmit}>Submit</button>
