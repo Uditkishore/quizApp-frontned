@@ -13,7 +13,7 @@ function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchUserDetails = async (token) => {
@@ -24,8 +24,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching user details:', error);
       setError(error.message);
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {

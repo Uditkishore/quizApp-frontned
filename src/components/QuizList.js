@@ -4,9 +4,11 @@ import './QuizList.css';
 
 import { baseUrl } from '../api';
 import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 const QuizList = () => {
-    const { user } = useSelector(state => state.user.userData)
+    const { loading, userData } = useSelector(state => state.user)
     const [quizzes, setQuizzes] = useState([]);
     const [isCorrect, setIsCorrect] = useState({});
     const [selectedOptions, setSelectedOptions] = useState({});
@@ -15,6 +17,8 @@ const QuizList = () => {
     const [isSubmitted, setIsSubmitted] = useState(localStorage.getItem('submitted') === 'true');
     const attemptedQuestionsRef = useRef([]);
 
+
+
     useEffect(() => {
         axios.get(`${baseUrl}/api/quiz/all`)
             .then(res => setQuizzes(res.data))
@@ -22,14 +26,6 @@ const QuizList = () => {
                 console.error('Error fetching quizzes:', err);
             });
     }, [isSubmitted]);
-
-    useEffect(() => {
-        localStorage.setItem('selectedOptions', JSON.stringify(selectedOptions));
-    }, [selectedOptions]);
-
-    useEffect(() => {
-        localStorage.setItem('isCorrect', JSON.stringify(isCorrect));
-    }, [isCorrect]);
 
     const handleSelect = (quizId, option, answer) => {
         if (!isSubmitted) {
@@ -44,17 +40,32 @@ const QuizList = () => {
     };
 
     const handleSubmit = () => {
-        localStorage.setItem('submitted', 'true');
-        setIsSubmitted(true);
+        if (Object.keys(selectedOptions).length === quizzes.length) {
+            localStorage.setItem('submitted', 'true');
+            setIsSubmitted(true);
+        } else {
+            toast("Please attemp all the questions !")
+        }
     };
+
+    if (loading) {
+        return (
+            <div className="App loading-container">
+                <div className="spinner-border text-dark" role="status">
+                    <span className="sr-only"></span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="quiz-container">
+            <ToastContainer />
             {isSubmitted ? (
                 <div>
                     <div className='d-flex justify-content-between'>
                         <p className="result">Total Score: {correctCount}/100</p>
-                        <p className="result">Welcone Back <b>{user.name}👋</b></p>
+                        <p className="result">Welcone Back <b>{userData.user.name}👋</b></p>
                     </div>
                     <ul className="quiz-list">
                         <p>You have already submited your response !</p>
@@ -69,7 +80,7 @@ const QuizList = () => {
                 </div>
             ) : (
                 <>
-                    <p className="result">Welcone Back <b>{user.name}👋</b></p>
+                    <p className="result">Welcone Back <b>{userData.user.name}👋</b></p>
                     <ol className="quiz-list">
                         {quizzes.map(quiz => (
                             <li key={quiz._id} className="quiz-item">

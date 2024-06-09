@@ -16,7 +16,6 @@ const Login = () => {
     try {
       e.preventDefault();
       let { data } = await axios.post(`${baseUrl}/api/user/login`, { email, password })
-      console.log('data', data);
       if (data.status) {
         localStorage.setItem("token", JSON.stringify(data.token))
         toast("Wow so easy!");
