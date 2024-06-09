@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import './QuizList.css';
 
+import { baseUrl } from '../api';
+
 const QuizList = () => {
     const [quizzes, setQuizzes] = useState([]);
     const [isCorrect, setIsCorrect] = useState({});
@@ -12,7 +14,7 @@ const QuizList = () => {
     const attemptedQuestionsRef = useRef([]);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/quiz/all')
+        axios.get(`${baseUrl}/api/quiz/all`)
             .then(res => setQuizzes(res.data))
             .catch(err => {
                 console.error('Error fetching quizzes:', err);
