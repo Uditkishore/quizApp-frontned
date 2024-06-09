@@ -5,7 +5,7 @@ import './App.css'
 function App() {
   return (
     <div className="App">
-      <h1 className='heading'>Quiz App</h1>
+      <h1 className='heading'>Quiz App Jyoti</h1>
       {/* <QuizForm /> */}
       <QuizList />
     </div>
