@@ -50,7 +50,7 @@ const QuizList = () => {
         <div className="quiz-container">
             {isSubmitted ? (
                 <div>
-                    <p className="result">Total Score: {correctCount}</p>
+                    <p className="result">Total Score: {correctCount}/100</p>
                     <ul className="quiz-list">
                         <h1>Correct Answers: </h1>
                         {quizzes.map(quiz => (

@@ -1,1 +1,1 @@
-export const baseUrl = "https://app.cyclic.sh";
+export const baseUrl = "https://quizapp-backend-production.up.railway.app"
