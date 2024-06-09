@@ -9,6 +9,7 @@ export const isTokenValid = (token) => {
         const currentTime = Math.floor(Date.now() / 1000);
 
         if (decodedToken.exp < currentTime) {
+            localStorage.removeItem('token')
             return false;
         }
 
