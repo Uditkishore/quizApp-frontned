@@ -5,9 +5,11 @@ import './QuizList.css';
 import { baseUrl } from '../api';
 import { useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 const QuizList = () => {
+    const navigate = useNavigate();
     const { loading, userData } = useSelector(state => state.user)
     const [quizzes, setQuizzes] = useState([]);
     const [isCorrect, setIsCorrect] = useState({});
@@ -46,6 +48,8 @@ const QuizList = () => {
         }
     };
 
+    const handleLogout = ()=> {localStorage.clear(); navigate('/login')}
+
     if (loading) {
         return (
             <div className="App loading-container">
@@ -63,7 +67,7 @@ const QuizList = () => {
                 <div>
                     <div className='d-flex justify-content-between'>
                         <p className="result">Total Score: {correctCount}/100</p>
-                        <p className="result">Welcone Back <b>Jyoti 👋</b></p>
+                        <p className="result">Welcone Back <b>{userData.user.name} 👋</b></p>
                     </div>
                     <ul className="quiz-list">
                         <p>You have already submited your response !</p>
@@ -78,7 +82,10 @@ const QuizList = () => {
                 </div>
             ) : (
                 <>
-                    <p className="result">Welcone Back <b>{userData.user.name}👋</b></p>
+                <div className='d-flex justify-content-between align-items-baseline'>
+                <p className="result">Welcone Back <b>{userData.user.name}👋</b></p>
+                <button onClick={handleLogout} className='btn btn-secondary btn-sm'>Logout</button>
+                </div>
                     <ol className="quiz-list">
                         {quizzes.map(quiz => (
                             <li key={quiz._id} className="quiz-item">
