@@ -14,10 +14,8 @@ const QuizList = () => {
     const [selectedOptions, setSelectedOptions] = useState({});
     const [disabledQuizzes, setDisabledQuizzes] = useState({});
     const [correctCount, setCorrectCount] = useState(0);
-    const [isSubmitted, setIsSubmitted] = useState(localStorage.getItem('submitted') === 'true');
+    const [isSubmitted, setIsSubmitted] = useState(localStorage.getItem('submitted') === 'false');
     const attemptedQuestionsRef = useRef([]);
-
-
 
     useEffect(() => {
         axios.get(`${baseUrl}/api/quiz/all`)
@@ -41,10 +39,10 @@ const QuizList = () => {
 
     const handleSubmit = () => {
         if (Object.keys(selectedOptions).length === quizzes.length) {
-            localStorage.setItem('submitted', 'true');
+            // localStorage.setItem('submitted', 'true');
             setIsSubmitted(true);
         } else {
-            toast("Please attemp all the questions !")
+            toast("Please attemp all the questions!")
         }
     };
 
@@ -65,7 +63,7 @@ const QuizList = () => {
                 <div>
                     <div className='d-flex justify-content-between'>
                         <p className="result">Total Score: {correctCount}/100</p>
-                        <p className="result">Welcone Back <b>{userData.user.name}👋</b></p>
+                        <p className="result">Welcone Back <b>Jyoti 👋</b></p>
                     </div>
                     <ul className="quiz-list">
                         <p>You have already submited your response !</p>
@@ -85,14 +83,14 @@ const QuizList = () => {
                         {quizzes.map(quiz => (
                             <li key={quiz._id} className="quiz-item">
                                 <p className="question">{quiz.question}</p>
-                                <ul className="option-list">
+                                <ul className="option-list px-3">
                                     {quiz.options.map((option, index) => {
                                         const isSelected = selectedOptions[quiz._id] === option;
                                         const buttonClass = isSelected ? (isCorrect[quiz._id] ? 'option-button selected correct' : 'option-button selected incorrect') : 'option-button';
                                         const isDisabled = disabledQuizzes[quiz._id] || isSubmitted;
 
                                         return (
-                                            <li key={index} className="option-item">
+                                            <li type="a" key={index} className="option-item">
                                                 <button
                                                     onClick={() => handleSelect(quiz._id, option, quiz.answer)}
                                                     className={buttonClass}

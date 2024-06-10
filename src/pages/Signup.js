@@ -102,7 +102,7 @@ const Login = () => {
               </form>
               <p className="mt-3 text-center">
                 Want to signin?{' '}
-                <Link to="/login" clLinkssName="text-decoration-none ms-1">
+                <Link to="/login" className="text-decoration-none ms-1">
                   Visit Login Page
                 </Link>
               </p>

@@ -2,12 +2,17 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { baseUrl } from '../api';
 import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
+import { IoEyeOutline, IoEyeOff } from "react-icons/io5";
 const Login = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
@@ -34,7 +39,7 @@ const Login = () => {
         <div className="col-md-6 col-lg-4">
           <div className="card shadow-sm">
             <div className="card-body">
-              <h1 className="card-title mb-4 text-center">Login</h1>
+              <h1 className="card-title mb-4 text-center">Jyoti</h1>
               <p className="mb-3 text-center">Hi, Welcome back 👋</p>
               {/* <button className="btn btn-outline-secondary mb-3 w-100">
                 <i className="fab fa-google"></i> Login with Google
@@ -59,15 +64,25 @@ const Login = () => {
                   <label htmlFor="password" className="form-label">
                     Password
                   </label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    required
-                  />
+                  <div className="input-group">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="form-control"
+                      id="password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={handlePasswordChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={togglePasswordVisibility}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <IoEyeOff /> : <IoEyeOutline />}
+                    </button>
+                  </div>
                 </div>
                 <div className="form-check mb-3">
                   <input
@@ -83,17 +98,17 @@ const Login = () => {
                   Login
                 </button>
               </form>
-              <p className="mt-3 text-center">
+              {/* <p className="mt-3 text-center">
                 Forgot Password?
-                <a href="#" className="text-decoration-none ms-1">
+                <Link href="#" className="text-decoration-none ms-1">
                   Click here
-                </a>
-              </p>
+                </Link>
+              </p> */}
               <p className="mt-3 text-center">
                 Not registered yet?{' '}
-                <a href="#" className="text-decoration-none ms-1">
+                <Link to="/registration" className="text-decoration-none ms-1">
                   Create an account
-                </a>
+                </Link>
               </p>
             </div>
           </div>
