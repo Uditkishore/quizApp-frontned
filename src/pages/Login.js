@@ -41,7 +41,7 @@ const Login = () => {
         <div className="col-md-6 col-lg-4">
           <div className="card shadow-sm">
             <div className="card-body">
-              <h1 className="card-title mb-4 text-center">Jyoti</h1>
+              <h1 className="card-title mb-4 text-center">Login</h1>
               <p className="mb-3 text-center">Hi, Welcome back 👋</p>
               {/* <button className="btn btn-outline-secondary mb-3 w-100">
                 <i className="fab fa-google"></i> Login with Google
