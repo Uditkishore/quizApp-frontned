@@ -5,26 +5,29 @@ import QuizList from './components/QuizList';
 // import QuizForm from './components/QuizForm';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from './store/slice/userSlice';
 import './App.css';
+import QuizForm from './components/QuizForm';
+import AminPage from './pages/Admin';
 
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const [loading, setLoading] = useState(false);
+  const { isAdmin } = useSelector(state => state.user)
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchUserDetails = async (token) => {
     try {
       const user = await getUserDetails(token);
+      user.token = token;
       dispatch(setUser(user));
-      setLoading(false);
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching user details:', error);
       setError(error.message);
-    } 
+    }
   };
 
   useEffect(() => {
@@ -56,7 +59,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/registration" element={<Signup />} />
         <Route path="/" element={<QuizList />} />
-        {/* <Route path="/create" element={<QuizForm />} /> */}
+        {isAdmin && <Route path="/create" element={<QuizForm />} />}
+        {isAdmin && <Route path="/admin" element={<AminPage />} />}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>

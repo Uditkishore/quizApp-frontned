@@ -3,25 +3,30 @@ import axios from 'axios';
 import './QuizList.css';
 
 import { baseUrl } from '../api';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { clearUser } from '../store/slice/userSlice';
 
 
 const QuizList = () => {
     const navigate = useNavigate();
-    const { loading, userData } = useSelector(state => state.user)
+    const dispatch = useDispatch()
+    const { userData, isAdmin } = useSelector(state => state.user)
+    const [loading, setLoading] = useState(true);
     const [quizzes, setQuizzes] = useState([]);
     const [isCorrect, setIsCorrect] = useState({});
     const [selectedOptions, setSelectedOptions] = useState({});
     const [disabledQuizzes, setDisabledQuizzes] = useState({});
     const [correctCount, setCorrectCount] = useState(0);
     const [isSubmitted, setIsSubmitted] = useState(localStorage.getItem('submitted') === 'false');
-    const attemptedQuestionsRef = useRef([]);
 
     useEffect(() => {
         axios.get(`${baseUrl}/api/quiz/all`)
-            .then(res => setQuizzes(res.data))
+            .then(res => {
+                setQuizzes(res.data)
+                setLoading(false)
+            })
             .catch(err => {
                 console.error('Error fetching quizzes:', err);
             });
@@ -48,7 +53,8 @@ const QuizList = () => {
         }
     };
 
-    const handleLogout = ()=> {localStorage.clear(); navigate('/login')}
+    const handleLogout = () => { localStorage.clear(); navigate('/login'); dispatch(clearUser()) }
+    const handleReset = () => { setIsSubmitted(false); setSelectedOptions({}); setDisabledQuizzes({}) }
 
     if (loading) {
         return (
@@ -61,19 +67,22 @@ const QuizList = () => {
     }
 
     return (
-        <div className="quiz-container">
+        <div className="container quiz-container py-3">
             <ToastContainer />
             {isSubmitted ? (
                 <div>
-                    <div className='d-flex justify-content-between'>
+                    <div className="d-flex justify-content-between flex-wrap">
                         <p className="result">Total Score: {correctCount}/100</p>
-                        <p className="result">Welcone Back <b>{userData.user.name} 👋</b></p>
+                        <p className="result">Welcome Back <b>{userData.name} 👋</b></p>
                     </div>
                     <ul className="quiz-list">
-                        <p>You have already submited your response !</p>
-                        <b>Check the currect answers: </b>
+                        <p>You have already submitted your response!</p>
+                        <div onClick={handleReset} className='d-flex justify-content-between align-items-center flex-wrap'>
+                            <b>Check the correct answers:</b>
+                            <button className='btn btn-success'>Reset</button>
+                        </div>
                         {quizzes.map(quiz => (
-                            <li key={quiz._id} className="quiz-item">
+                            <li key={quiz._id} className="quiz-item mt-3">
                                 <p className="question">{quiz.question}</p>
                                 <p className="answer">Correct Answer: <i>{quiz.answer}</i></p>
                             </li>
@@ -82,42 +91,55 @@ const QuizList = () => {
                 </div>
             ) : (
                 <>
-                <div className='d-flex justify-content-between align-items-baseline'>
-                <p className="result">Welcone Back <b>{userData.user.name}👋</b></p>
-                <button onClick={handleLogout} className='btn btn-secondary btn-sm'>Logout</button>
-                </div>
+                    <div className="d-flex justify-content-between align-items-baseline flex-wrap">
+                        <p className="result">Welcome Back <b>{userData.name} 👋</b></p>
+                        <div className="d-flex gap-2">
+                            {isAdmin && (
+                                <Link to="/create" className="btn btn-secondary btn-sm">Add</Link>
+                            )}
+                            {isAdmin && (
+                                <Link to="/admin" className="btn btn-secondary btn-sm">Modify</Link>
+                            )}
+                            <button onClick={handleLogout} className="btn btn-secondary btn-sm">Logout</button>
+                        </div>
+                    </div>
                     <ol className="quiz-list">
                         {quizzes.map(quiz => (
-                            <li key={quiz._id} className="quiz-item">
+                            <li key={quiz._id} className="quiz-item mt-3">
                                 <p className="question">{quiz.question}</p>
-                                <ul className="option-list px-3">
+                                <ol className="option-list p-0">
                                     {quiz.options.map((option, index) => {
                                         const isSelected = selectedOptions[quiz._id] === option;
-                                        const buttonClass = isSelected ? (isCorrect[quiz._id] ? 'option-button selected correct' : 'option-button selected incorrect') : 'option-button';
+                                        const buttonClass = isSelected
+                                            ? (isCorrect[quiz._id] ? 'option-button selected correct' : 'option-button selected incorrect')
+                                            : 'option-button btn-sm';
                                         const isDisabled = disabledQuizzes[quiz._id] || isSubmitted;
 
+                                        const serialNumber = String.fromCharCode(65 + index).toLowerCase();
+
                                         return (
-                                            <li type="a" key={index} className="option-item">
+                                            <li key={index} className="option-item list-unstyled">
                                                 <button
                                                     onClick={() => handleSelect(quiz._id, option, quiz.answer)}
                                                     className={buttonClass}
                                                     disabled={isDisabled}
                                                 >
-                                                    {option}
+                                                    {serialNumber}. &nbsp; {option}
                                                 </button>
                                             </li>
                                         );
                                     })}
-                                </ul>
+                                </ol>
                             </li>
                         ))}
                     </ol>
                 </>
             )}
             {!isSubmitted && (
-                <button className="submit-button" onClick={handleSubmit}>Submit</button>
+                <button className="submit-button btn btn-primary mt-4 btn-sm d-block" onClick={handleSubmit}>Submit</button>
             )}
         </div>
+
     );
 };
 

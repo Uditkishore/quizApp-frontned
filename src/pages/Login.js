@@ -21,7 +21,6 @@ const Login = () => {
     try {
       e.preventDefault();
       let response = await axios.post(`${baseUrl}/api/user/login`, { email, password })
-      // console.log('response', response);
       if (response.status) {
         localStorage.setItem("token", JSON.stringify(response.data.token))
         toast("Wow so easy!");
@@ -31,7 +30,6 @@ const Login = () => {
       console.log('error', error);
       toast("username or password is wrong X")
     }
-
   };
 
   return (

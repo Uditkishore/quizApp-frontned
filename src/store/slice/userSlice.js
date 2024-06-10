@@ -4,16 +4,19 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: {
         userData: {},
-        loading : true
+        isAdmin: false
     },
     reducers: {
         setUser: (state, action) => {
-            state.userData = action.payload;
+            if (action.payload.user.role === 'admin') {
+                state.isAdmin = true
+            }
+            state.userData = action.payload.user;
             state.loading = false
         },
         clearUser: (state) => {
             state.userData = {};
-            state.loading = false
+            state.isAdmin = false
         },
     },
 });
