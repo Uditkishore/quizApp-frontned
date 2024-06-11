@@ -60,7 +60,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login  fetchUserDetails={fetchUserDetails}/>} />
         <Route path="/registration" element={<Signup />} />
         <Route path="/" element={<QuizList />} />
         {isAdmin && <Route path="/create" element={<QuizForm />} />}

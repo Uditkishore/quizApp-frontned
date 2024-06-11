@@ -4,7 +4,8 @@ import { baseUrl } from '../api';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoEyeOutline, IoEyeOff } from "react-icons/io5";
-const Login = () => {
+
+const Login = ({ fetchUserDetails }) => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +25,7 @@ const Login = () => {
       if (response.status) {
         localStorage.setItem("token", JSON.stringify(response.data.token))
         toast("Wow so easy!");
+        fetchUserDetails(response.data.token)
         navigate('/');
       }
     } catch (error) {
