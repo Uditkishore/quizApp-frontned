@@ -10,6 +10,7 @@ import { setUser } from './store/slice/userSlice';
 import './App.css';
 import QuizForm from './components/QuizForm';
 import AminPage from './pages/Admin';
+import AdminPage from './pages/Admin';
 
 function App() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ function App() {
     } else {
       fetchUserDetails(token);
     }
-  }, [navigate]);
+  }, []);
 
   if (loading) {
     return (
@@ -63,7 +64,7 @@ function App() {
         <Route path="/registration" element={<Signup />} />
         <Route path="/" element={<QuizList />} />
         {isAdmin && <Route path="/create" element={<QuizForm />} />}
-        {isAdmin && <Route path="/admin" element={<AminPage />} />}
+        {isAdmin && <Route path="/admin" element={<AdminPage />} />}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
