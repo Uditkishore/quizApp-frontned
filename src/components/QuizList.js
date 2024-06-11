@@ -72,7 +72,7 @@ const QuizList = () => {
             {isSubmitted ? (
                 <div>
                     <div className="d-flex justify-content-between flex-wrap">
-                        <p className="result">Total Score: {correctCount}/100</p>
+                        <p className="result">Total Score: {correctCount}/{quizzes.length}0</p>
                         <p className="result">Welcome Back <b>{userData.name} 👋</b></p>
                     </div>
                     <ul className="quiz-list">
