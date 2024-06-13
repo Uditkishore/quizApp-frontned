@@ -36,7 +36,7 @@ const Login = () => {
         <div className="col-md-6 col-lg-4">
           <div className="card shadow-sm">
             <div className="card-body">
-              <h1 className="card-title mb-4 text-center">Login</h1>
+              <h1 className="card-title mb-4 text-center">Sign Up</h1>
               <p className="mb-3 text-center">Hi, Welcome back 👋</p>
               {/* <button className="btn btn-outline-secondary mb-3 w-100">
                 <i className="fab fa-google"></i> Login with Google
@@ -53,7 +53,7 @@ const Login = () => {
                     className="form-control"
                     id="name"
                     placeholder="E.g. johndoe@email.com"
-                    value={email}
+                    value={name}
                     onChange={handleNameChange}
                     required
                   />
@@ -97,7 +97,7 @@ const Login = () => {
                   </label>
                 </div>
                 <button type="submit" className="btn btn-primary w-100">
-                  Login
+                  Signup
                 </button>
               </form>
               <p className="mt-3 text-center">
