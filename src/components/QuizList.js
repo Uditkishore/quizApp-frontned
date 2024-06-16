@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './QuizList.css';
 
@@ -8,24 +8,24 @@ import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { clearUser } from '../store/slice/userSlice';
 
-
 const QuizList = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch()
-    const { userData, isAdmin } = useSelector(state => state.user)
+    const dispatch = useDispatch();
+    const { userData, isAdmin } = useSelector(state => state.user);
     const [loading, setLoading] = useState(true);
     const [quizzes, setQuizzes] = useState([]);
     const [isCorrect, setIsCorrect] = useState({});
     const [selectedOptions, setSelectedOptions] = useState({});
+    const [response, setResponse] = useState([]);
     const [disabledQuizzes, setDisabledQuizzes] = useState({});
     const [correctCount, setCorrectCount] = useState(0);
-    const [isSubmitted, setIsSubmitted] = useState(localStorage.getItem('submitted') === 'false');
+    const [isSubmitted, setIsSubmitted] = useState(localStorage.getItem('submitted') === 'true');
 
     useEffect(() => {
         axios.get(`${baseUrl}/api/quiz/all`)
             .then(res => {
-                setQuizzes(res.data)
-                setLoading(false)
+                setQuizzes(res.data);
+                setLoading(false);
             })
             .catch(err => {
                 console.error('Error fetching quizzes:', err);
@@ -38,23 +38,42 @@ const QuizList = () => {
             setIsCorrect(prevState => ({ ...prevState, [quizId]: option === answer }));
             setDisabledQuizzes(prevState => ({ ...prevState, [quizId]: true }));
 
+            setResponse(prevState => [
+                ...prevState,
+                { questionId: quizId, isCorrect: option === answer }
+            ]);
+
             if (option === answer) {
-                setCorrectCount(prevCount => prevCount + 10);
+                setCorrectCount(prevCount => prevCount + 1);
             }
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (Object.keys(selectedOptions).length === quizzes.length) {
-            // localStorage.setItem('submitted', 'true');
+            let { data } = await axios.post(`${baseUrl}/api/score/create`, { userId: userData._id, answer: response });
+            console.log('data', data);
             setIsSubmitted(true);
+            localStorage.setItem('submitted', 'true');
+            setResponse([])
         } else {
-            toast("Please attemp all the questions!")
+            toast("Please attempt all the questions!");
         }
     };
 
-    const handleLogout = () => { localStorage.clear(); navigate('/login'); dispatch(clearUser()) }
-    const handleReset = () => { setIsSubmitted(false); setSelectedOptions({}); setDisabledQuizzes({}) }
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/login');
+        dispatch(clearUser());
+    };
+
+    const handleReset = () => {
+        setIsSubmitted(false);
+        setSelectedOptions({});
+        setDisabledQuizzes({});
+        setCorrectCount(0);
+        localStorage.setItem('submitted', 'false');
+    };
 
     if (loading) {
         return (
@@ -72,14 +91,14 @@ const QuizList = () => {
             {isSubmitted ? (
                 <div>
                     <div className="d-flex justify-content-between flex-wrap">
-                        <p className="result">Total Score: {correctCount}/{quizzes.length}0</p>
+                        <p className="result">Total Score: {Math.abs((correctCount / quizzes.length) * 100).toFixed(2)}%</p>
                         <p className="result">Welcome Back <b>{userData.name} 👋</b></p>
                     </div>
                     <ul className="quiz-list">
                         <p>You have already submitted your response!</p>
-                        <div onClick={handleReset} className='d-flex justify-content-between align-items-center flex-wrap'>
+                        <div onClick={handleReset} className="d-flex justify-content-between align-items-center flex-wrap">
                             <b>Check the correct answers:</b>
-                            <button className='btn btn-success'>Reset</button>
+                            <button className="btn btn-success">Reset</button>
                         </div>
                         {quizzes.map(quiz => (
                             <li key={quiz._id} className="quiz-item mt-3">
@@ -99,6 +118,9 @@ const QuizList = () => {
                             )}
                             {isAdmin && (
                                 <Link to="/admin" className="btn btn-secondary btn-sm">Modify</Link>
+                            )}
+                            {isAdmin && (
+                                <Link to="/history" className="btn btn-secondary btn-sm">Responses</Link>
                             )}
                             <button onClick={handleLogout} className="btn btn-secondary btn-sm">Logout</button>
                         </div>
@@ -139,7 +161,6 @@ const QuizList = () => {
                 <button className="submit-button btn btn-primary mt-4 btn-sm d-block" onClick={handleSubmit}>Submit</button>
             )}
         </div>
-
     );
 };
 

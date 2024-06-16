@@ -11,6 +11,8 @@ import './App.css';
 import QuizForm from './components/QuizForm';
 import AminPage from './pages/Admin';
 import AdminPage from './pages/Admin';
+import UserResponse from './pages/Responses';
+import QuizHistory from './pages/QuizHistory';
 
 function App() {
   const navigate = useNavigate();
@@ -60,11 +62,13 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/login" element={<Login  fetchUserDetails={fetchUserDetails}/>} />
+        <Route path="/login" element={<Login fetchUserDetails={fetchUserDetails} />} />
         <Route path="/registration" element={<Signup />} />
         <Route path="/" element={<QuizList />} />
         {isAdmin && <Route path="/create" element={<QuizForm />} />}
         {isAdmin && <Route path="/admin" element={<AdminPage />} />}
+        {isAdmin && <Route path="/history" element={<UserResponse />} />}
+        {isAdmin && <Route path="/responses/:responseId" element={<QuizHistory />} />}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
